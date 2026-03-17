@@ -24,7 +24,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // --- 2. CONNEXION MONGODB ---
 
 // Utilise l'URI de l'environnement (en ligne) ou le local si rien n'est défini
-const mongoURI = process.env.MONGO_URI || "mongodb://localhost:27017/studychat";
+const mongoURI = process.env.MONGO_URI || "mongodb+srv://nelson:<db_password>@cluster0.uvjq8jz.mongodb.net/?appName=Cluster0";
 const PORT = process.env.PORT || 3000;
 
 // Connexion MongoDB
