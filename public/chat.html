@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyChat</title>
+<link rel="stylesheet" href="chat.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+
+
+
+
+
+
+
+
+
+<div class="app-container">
+    <div class="sidebar">
+        <div class="header-blue">
+            <div class="logo-area">
+                <h3><i class="fas fa-graduation-cap"></i> StudyChat</h3>
+                <div>
+                    <i class="fas fa-search"></i> &nbsp;
+                    <i class="fas fa-bell"></i>
+                </div>
+            </div>
+            <div class="tabs">
+                <div class="tab active">Chats</div>
+                <div class="tab">Groups</div>
+                <div class="tab">Resources</div>
+            </div>
+        </div>
+
+        <div class="stories-container">
+            <div class="avatar-story">
+                <img src="https://i.pravatar.cc/150?u=sarah" alt="Sarah">
+                <div class="status-dot"></div>
+                <p>Sarah</p>
+            </div>
+            <div class="avatar-story">
+                <img src="https://i.pravatar.cc/150?u=kevin" alt="Kevin">
+                <div class="status-dot"></div>
+                <p>Kevin</p>
+            </div>
+            <div class="avatar-story">
+                <img src="https://i.pravatar.cc/150?u=emma" alt="Emma">
+                <div class="status-dot"></div>
+                <p>Emma</p>
+            </div>
+        </div>
+        <div class="search-user">
+    <input type="email" id="searchEmail" placeholder="Rechercher un contact par email">
+    <button onclick="searchUser()">Ajouter</button>
+</div>
+
+<div id="searchResult"></div>
+
+        <div class="chat-list" id="contactsList">
+            <div class="chat-item active">
+                <img src="https://i.pravatar.cc/150?u=group" alt="Math Group">
+                <div class="chat-info">
+                    <h4>Math Group</h4>
+                    <p>Does anyone have the solutions?</p>
+                </div>
+                <div class="badge">2</div>
+            </div>
+            <div class="chat-item">
+                <img src="https://i.pravatar.cc/150?u=sophie" alt="Sophie">
+                <div class="chat-info">
+                    <h4>Sophie</h4>
+                    <p>Are you ready for the test?</p>
+                </div>
+            </div>
+            <div class="chat-item">
+                <img src="https://i.pravatar.cc/150?u=ryan" alt="Ryan">
+                <div class="chat-info">
+                    <h4>Ryan</h4>
+                    <p>Got the assignment PDF?</p>
+                </div>
+                <div class="badge">1</div>
+            </div>
+        </div>
+
+        <div class="nav-mobile">
+            <i class="fas fa-home"></i>
+            <i class="fas fa-comment-dots" style="color: var(--primary-blue);"></i>
+            <i class="fas fa-tasks"></i>
+            <i class="fas fa-user"></i>
+        </div>
+    </div>
+
+    <div class="main-chat">
+        <div class="chat-header">
+            <div>
+                <h4 style="margin:0">Math Group</h4>
+                <small style="color:var(--text-gray)">32 members</small>
+            </div>
+            <div style="color: var(--text-gray)">
+                <i class="fas fa-search"></i> &nbsp;
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+        </div>
+
+        <div class="messages-area">
+            <div class="msg received">
+                <div style="display:flex; align-items:center; margin-bottom:5px;">
+                    <img src="https://i.pravatar.cc/150?u=mark" width="25" style="border-radius:50%; margin-right:8px;">
+                    <small><b>Mark</b> • 2:20 AM</small>
+                </div>
+                <div class="msg-bubble">
+                    Does anyone have the solutions for these equations?
+                    <div class="math-card">
+                        $ x^2 - 5x + 6 = 0 $ <br>
+                        $ x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a} $
+                    </div>
+                </div>
+            </div>
+
+            <div class="msg sent">
+                <div style="align-self: flex-end; margin-bottom:5px;">
+                    <small>2:30 AM • <b>Jonathan</b></small>
+                </div>
+                <div class="msg-bubble">
+                    Got it! Here's the solutions:<br>
+                    <b>x₁ = 2 and x₂ = 3</b>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-area">
+            <form action="" id="fileForm">
+                <!-- <input type="file" id="fileInput" name="file">
+                <i class="far fa-smile" style="font-size: 1.2em; color: #aaa;"></i>-->
+            <input type="text" placeholder="Write a message..." id="msgInput">
+            <i class="fas fa-microphone" style="color: #aaa;"></i>
+            <button class="btn-send" type="submit"><i class="fas fa-paper-plane"></i></button>
+            </form>
+            
+        </div>
+    </div>
+</div>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+
+<script src="chat.js"></script>
+
+
+
+</body>
+</html>
