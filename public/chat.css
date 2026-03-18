@@ -261,3 +261,63 @@ cursor:pointer;
 #searchResult{
 padding:10px;
 }
+/* Style du bouton retour */
+.back-btn {
+    display: none; /* Caché sur PC */
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    color: var(--primary-blue);
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* --- LOGIQUE MOBILE --- */
+@media (max-width: 768px) {
+    .app-container {
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    /* 1. On cache la zone de discussion par défaut */
+    .main-chat {
+        display: none; 
+        width: 100%;
+        height: 100%;
+    }
+
+    /* 2. On s'assure que la barre latérale prend toute la place au début */
+    .sidebar {
+        width: 100%;
+        display: flex;
+    }
+
+    /* 3. On affiche le bouton retour (que tu as ajouté précédemment) */
+    .back-btn {
+        display: block !important;
+    }
+}
+
+
+
+
+#fileForm {
+    display: flex;
+    align-items: center; /* Aligne verticalement les éléments au centre */
+    gap: 10px;           /* Espace entre l'input, le micro et le bouton */
+    width: 100%;         /* Le formulaire occupe toute la largeur de .input-area */
+}
+
+#msgInput {
+    flex: 1;             /* L'input prend tout l'espace disponible */
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    outline: none;
+    min-width: 0;        /* Sécurité pour éviter que l'input ne dépasse sur petit écran */
+}
+.input-area {
+    padding: 15px 20px;
+    background: white;
+    border-top: 1px solid #eee;
+}

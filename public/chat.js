@@ -2,6 +2,9 @@
 const socket = io();
 const userId = localStorage.getItem("userId");
 let receiver = null;
+const sidebar = document.querySelector('.sidebar');
+const mainChat = document.querySelector('.main-chat');
+const backBtn = document.getElementById('back-to-list'); // Assure-toi d'avoir mis cet ID dans ton HTML
 
 if (!userId) {
     alert("Reconnecte-toi !");
@@ -129,6 +132,13 @@ async function loadContacts() {
         div.onclick = () => {
             receiver = contact._id;
             loadMessages(receiver); // Charger les anciens messages
+
+            // --- AJOUT LOGIQUE MOBILE ---
+            if (window.innerWidth <= 768) {
+                sidebar.style.display = 'none';   // Cache la liste
+                mainChat.style.display = 'flex';  // Affiche le chat
+                mainChat.style.width = '100%';
+            }
         };
 
         contactsDiv.appendChild(div);
