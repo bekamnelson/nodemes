@@ -296,7 +296,39 @@ padding:10px;
     .back-btn {
         display: block !important;
     }
+    .chat-header {
+    padding: 15px 25px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--white); /* Important pour que les messages ne passent pas "derrière" par transparence */
+    position: sticky;        /* Garde le header fixé */
+    top: 0;                 /* Colle au haut du conteneur */
+    z-index: 10;            /* Passe au-dessus des messages */
 }
+   .messages-area {
+    flex: 1;                /* Prend tout l'espace sous le header */
+    padding: 20px;
+    overflow-y: auto;       /* Active le scroll interne */
+    background: #fcfdfe;
+    display: flex;
+    flex-direction: column;
+}
+  .chat-header {
+        padding: 10px 15px; /* Plus fin sur mobile */
+        height: 60px;       /* Hauteur fixe pour plus de stabilité */
+    }
+    
+    .back-btn {
+        margin-right: 10px;
+        font-size: 1.1em;
+    }
+    .navhidden2{
+        display: none;
+    }
+}
+
 
 
 
@@ -320,4 +352,43 @@ padding:10px;
     padding: 15px 20px;
     background: white;
     border-top: 1px solid #eee;
+}
+
+
+
+
+
+@media (min-width: 768px) {
+     .nav-mobile {
+    width: 70px;
+    background: #2c3e50; /* Une couleur sombre pour contraster */
+    display: flex;
+    flex-direction: column; /* VERTICAL */
+    align-items: center;
+    padding: 20px 0;
+    gap: 30px;
+    border-right: 1px solid #ddd;
+}
+.navhidden{
+    display: none;
+}
+
+.nav-item {
+    color: #bdc3c7;
+    font-size: 1.4em;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-item.active, .nav-item:hover {
+    color: var(--primary-blue);
+}
+
+.nav-item.settings {
+    margin-top: auto; /* Pousse l'icône réglages tout en bas */
+}
+
+
+
+
 }

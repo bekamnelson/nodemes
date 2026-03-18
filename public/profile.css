@@ -1,0 +1,141 @@
+/* Variables Globales cohérentes avec StudyChat */
+:root {
+    --primary-blue: #4a90e2;
+    --gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --bg-light: #f0f4f8;
+    --white: #ffffff;
+    --text-dark: #333;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* Empêche le scroll global */
+    background-color: var(--bg-light);
+}
+
+.settings-container {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-card {
+    background: var(--white);
+    width: 100%;
+    max-width: 450px;
+    height: 100%; /* Prend toute la hauteur sur mobile */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* Sur PC, on lui donne une forme de carte */
+@media (min-width: 769px) {
+    .profile-card {
+        height: auto;
+        max-height: 90vh;
+        border-radius: 20px;
+    }
+}
+
+.profile-header {
+    background: var(--gradient);
+    padding: 30px 20px;
+    text-align: center;
+    color: white;
+    flex-shrink: 0; /* Empêche le header de s'écraser */
+}
+
+.avatar-upload {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 10px;
+}
+
+#profileImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+}
+
+.upload-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: white;
+    color: var(--primary-blue);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+/* Corps du formulaire avec scroll interne si nécessaire */
+.profile-body {
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto; /* Seule cette zone peut scroller si le contenu dépasse */
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.input-group label {
+    font-size: 0.85em;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.input-group input, 
+.input-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9em;
+    outline: none;
+    background: #fafafa;
+}
+
+.input-group textarea {
+    height: 80px; /* Taille réduite pour tenir sur une page */
+    resize: none;
+}
+
+.save-btn {
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: auto; /* Pousse le bouton vers le bas */
+    flex-shrink: 0;
+}
+
+.save-btn:active {
+    transform: scale(0.98);
+}

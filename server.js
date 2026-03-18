@@ -41,8 +41,15 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
+    profilePic: {type: String,default: "https://i.pravatar.cc/150"},
+    contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    
+
 });
+
+
+
+
 const User = mongoose.model("User", userSchema);
 
 const messageSchema = new mongoose.Schema({
@@ -123,7 +130,7 @@ app.post("/addContact", async (req, res) => {
 
 app.get("/contacts/:userId", async (req, res) => {
     try {
-        const user = await User.findById(req.params.userId).populate("contacts", "username email");
+        const user = await User.findById(req.params.userId).populate("contacts", "username email profilePic");
         if (!user) return res.json({ success: false });
         res.json({ success: true, contacts: user.contacts });
     } catch (err) {
@@ -193,4 +200,68 @@ io.on("connection", (socket) => {
 
 server.listen(PORT, () => {
     console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
+});
+
+
+
+
+
+
+
+app.post("/updateProfile", async (req, res) => {
+    try {
+
+        const { userId, username, email } = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { username, email },
+            { new: true }
+        );
+
+        res.json({
+            success: true,
+            user: updatedUser
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.json({ success: false });
+    }
+});
+
+
+
+
+
+
+
+app.post("/uploadProfilePic", upload.single("image"), async (req, res) => {
+
+try {
+
+const userId = req.body.userId;
+
+const imageUrl = "/uploads/" + req.file.filename;
+
+await User.findByIdAndUpdate(userId, {
+profilePic: imageUrl
+});
+
+res.json({
+success: true,
+imageUrl
+});
+
+} catch (err) {
+res.json({ success: false });
+}
+
+});
+app.get("/user/:id", async (req,res)=>{
+
+const user = await User.findById(req.params.id);
+
+res.json({ user });
+
 });

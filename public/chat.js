@@ -85,7 +85,7 @@ async function searchUser() {
     const user = data.user;
     resultDiv.innerHTML = `
         <div class="chat-item">
-            <img src="https://i.pravatar.cc/150?u=${user.username}">
+            <img src="${user.profilePic}">
             <div class="chat-info">
                 <h4>${user.username}</h4>
                 <p>${user.email}</p>
@@ -119,10 +119,11 @@ async function loadContacts() {
     contactsDiv.innerHTML = ""; 
 
     data.contacts.forEach(contact => {
+      
         const div = document.createElement("div");
         div.className = "chat-item";
         div.innerHTML = `
-            <img src="https://i.pravatar.cc/150?u=${contact.username}">
+            <img src="${contact.profilePic}">
             <div class="chat-info">
                 <h4>${contact.username}</h4>
                 <p>${contact.email}</p>
