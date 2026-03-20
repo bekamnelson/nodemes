@@ -36,13 +36,17 @@ function showConversations(){
         resultDiv.style.display = "none";// Efface le contenu
         // OU  resultDiv.innerHTML = ""; 
     }
-
+    document.getElementById("searchEmail").value = "";
     loadConversations();
 }
 
 function showContacts(){
     loadContacts();
     document.getElementById("searchBar").style.display = "flex";
+    
+    // S'assurer que le bloc de résultat peut à nouveau s'afficher
+    const resultDiv = document.getElementById("searchResult");
+    if(resultDiv) resultDiv.style.display = "block";
 }
 
 // ==========================================
