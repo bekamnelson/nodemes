@@ -27,8 +27,16 @@ if (!userId) {
 // ==========================================
 
 function showConversations(){
-    // cacher la barre de recherche
+    // 1. Cacher la barre d'input de recherche
     document.getElementById("searchBar").style.display = "none";
+    
+    // 2. VIDER ou CACHER le résultat de la recherche précédente (L'ajout est ici)
+    const resultDiv = document.getElementById("searchResult");
+    if(resultDiv) {
+        resultDiv.style.display = "none";// Efface le contenu
+        // OU  resultDiv.innerHTML = ""; 
+    }
+
     loadConversations();
 }
 
