@@ -1,5 +1,6 @@
 // 1. CONFIGURATION ET ÉTABLISSEMENT DE LA CONNEXION
 const socket = io();
+
 const userId = localStorage.getItem("userId");
 let receiver = null;
 const sidebar = document.querySelector('.sidebar');
@@ -109,6 +110,9 @@ async function addContact(contactId) {
     }
 }
 
+
+
+
 async function loadContacts() {
     const res = await fetch("/contacts/" + userId);
     const data = await res.json();
@@ -116,7 +120,8 @@ async function loadContacts() {
     if (!data.success) return;
 
     const contactsDiv = document.getElementById("contactsList");
-    contactsDiv.innerHTML = ""; 
+   // contactsDiv.innerHTML = ""; 
+   contactsDiv.innerHTML = "<h3 style='padding:10px'>Contacts</h3>";
 
     data.contacts.forEach(contact => {
       
@@ -132,6 +137,8 @@ async function loadContacts() {
 
         div.onclick = () => {
             receiver = contact._id;
+            // 🔥 mettre header
+             setChatHeader(contact);
             loadMessages(receiver); // Charger les anciens messages
 
             // --- AJOUT LOGIQUE MOBILE ---
@@ -179,5 +186,145 @@ form.addEventListener("submit", (e) => {
     msgInput.value = "";
 });
 
+
+
+// ---------------------------------------------------------
+// 5. CHARGER LES CONVERSATIONS
+// ---------------------------------------------------------
+
+
+
+async function loadConversations(){
+
+const userId = localStorage.getItem("userId");
+
+const res = await fetch("/conversations/" + userId);
+const data = await res.json();
+
+if(!data.success) return;
+
+const contactsDiv = document.getElementById("contactsList");
+contactsDiv.innerHTML = "<h3 style='padding:10px'>Messages</h3>";
+
+for(let id in data.conversations){
+
+const conv = data.conversations[id];
+
+const div = document.createElement("div");
+div.className = "chat-item";
+
+div.innerHTML = `
+<img src="https://i.pravatar.cc/150?u=${id}">
+<div class="chat-info">
+<h4>${id}</h4>
+<p>${conv.lastMessage}</p>
+</div>
+${conv.unread > 0 ? `<div class="badge">${conv.unread}</div>` : ""}
+`;
+
+
+
+div.onclick = async () => {
+
+receiver = id;
+
+// récupérer user
+const res = await fetch("/user/" + id);
+const data = await res.json();
+
+setChatHeader(data.user);
+
+loadMessages(receiver);
+markAsSeen(receiver);
+
+};
+
+
+
+contactsDiv.appendChild(div);
+
+}
+
+}
+
+async function markAsSeen(receiver){
+
+const userId = localStorage.getItem("userId");
+
+await fetch("/markSeen",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body: JSON.stringify({ userId, receiver })
+});
+
+}
+
+
+
+
+let currentContact = null;
+
+function setChatHeader(contact){
+
+currentContact = contact;
+
+// nom
+document.getElementById("chatUserName").innerText = contact.username;
+
+// photo
+document.getElementById("chatUserImg").src =
+contact.profilePic || "/images/noprofil.png";
+console.log(contact.profilePic);
+// statut par défaut
+document.getElementById("chatUserStatus").innerText = "offline";
+
+// 🔥 demander statut réel
+socket.emit("getStatus", contact._id);
+
+}
+// ---------------------------------------------------------
+// 6. fonction icone
+// ---------------------------------------------------------
+
+function showConversations(){
+
+    // cacher la barre de recherche
+document.getElementById("searchBar").style.display = "none";
+
+    loadConversations();
+
+
+}
+
+function showContacts(){
+    loadContacts();
+    document.getElementById("searchBar").style.display = "flex";
+
+
+}
+
+
+
 // Lancer au chargement de la page
-loadContacts();
+ loadConversations();
+// quand on charge la page
+ window.onload = () => {
+showConversations(); // ou showContacts()
+};
+
+
+
+
+socket.on("userStatus", (data) => {
+
+if(currentContact && data.userId == currentContact._id){
+
+if(data.status === "online"){
+document.getElementById("chatUserStatus").innerText = "🟢 En ligne";
+}else{
+document.getElementById("chatUserStatus").innerText = "⚫ Hors ligne";
+}
+
+}
+
+});

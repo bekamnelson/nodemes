@@ -41,7 +41,7 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    profilePic: {type: String,default: "https://i.pravatar.cc/150"},
+    profilePic: {type: String,default: "/images/noprofil.png"},
     contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     
 
@@ -57,8 +57,13 @@ const messageSchema = new mongoose.Schema({
     receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     message: String,
     file: String,
+    seen: {type: Boolean,default: false},
     createdAt: { type: Date, default: Date.now }
 });
+
+
+
+
 const Message = mongoose.model("Message", messageSchema);
 
 // --- 4. CONFIGURATION MULTER (UPLOADS) ---
@@ -169,32 +174,86 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
 // --- 8. LOGIQUE SOCKET.IO ---
 
+let onlineUsers = {};
+
 io.on("connection", (socket) => {
+
     console.log("🔌 Utilisateur connecté :", socket.id);
 
-    // Rejoindre une room personnelle basée sur l'ID utilisateur
+    // rejoindre sa room + statut online
     socket.on("join", (userId) => {
+
         socket.join(userId);
-        console.log(`User ${userId} a rejoint sa room`);
+
+        onlineUsers[userId] = socket.id;
+
+        console.log(`User ${userId} connecté`);
+
+        // 🔥 notifier tout le monde
+        io.emit("userStatus", {
+            userId,
+            status: "online"
+        });
+
     });
 
-    // Envoi de message en temps réel
+    // envoi message
     socket.on("sendMessage", async (data) => {
+
         const { sender, receiver, message } = data;
 
-        const newMsg = new Message({ sender, receiver, message });
+        const newMsg = new Message({
+            sender,
+            receiver,
+            message
+        });
+
         await newMsg.save();
 
-        // Envoyer au destinataire
+        // envoyer au receiver
         io.to(receiver).emit("receiveMessage", newMsg);
-        // Envoyer aussi à l'expéditeur (pour confirmation/synchro)
+
+        // envoyer au sender
         io.to(sender).emit("receiveMessage", newMsg);
+
     });
 
+    // déconnexion
     socket.on("disconnect", () => {
+
         console.log("❌ Utilisateur déconnecté");
+
+        for(let userId in onlineUsers){
+
+            if(onlineUsers[userId] === socket.id){
+
+                delete onlineUsers[userId];
+
+                io.emit("userStatus", {
+                    userId,
+                    status: "offline"
+                });
+
+            }
+
+        }
+
     });
+    socket.on("getStatus", (userId) => {
+
+const isOnline = onlineUsers[userId] ? "online" : "offline";
+
+socket.emit("userStatus", {
+userId,
+status: isOnline
 });
+
+});
+
+});
+
+
+
 
 // --- 9. LANCEMENT DU SERVEUR ---
 
@@ -265,3 +324,75 @@ const user = await User.findById(req.params.id);
 res.json({ user });
 
 });
+
+
+//CONVERSATION
+app.get("/conversations/:userId", async (req, res) => {
+    try {
+
+        const userId = req.params.userId;
+
+        const messages = await Message.find({
+            $or: [
+                { sender: userId },
+                { receiver: userId }
+            ]
+        }).sort({ createdAt: -1 });
+
+        const conversations = {};
+
+        messages.forEach(msg => {
+
+            const otherUser = msg.sender == userId ? msg.receiver : msg.sender;
+
+            if(!conversations[otherUser]){
+                conversations[otherUser] = {
+                    lastMessage: msg.message,
+                    date: msg.createdAt,
+                    unread: 0
+                };
+            }
+
+            // compter messages non lus
+            if(msg.receiver == userId && !msg.seen){
+                conversations[otherUser].unread++;
+            }
+
+        });
+
+        res.json({
+            success: true,
+            conversations
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.json({ success: false });
+    }
+});
+
+app.post("/markSeen", async (req,res)=>{
+
+const { userId, receiver } = req.body;
+
+await Message.updateMany(
+{
+sender: receiver,
+receiver: userId,
+seen: false
+},
+{ seen: true }
+);
+
+res.json({ success:true });
+
+});
+
+
+
+
+// notification en ligne ou online
+
+
+
+
