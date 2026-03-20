@@ -102,7 +102,8 @@ async function addContact(contactId) {
 // ==========================================
 
 socket.on("receiveMessage", (data) => {
-    if (data.sender !== userId) {
+   
+    if (data.sender === receiver || data.sender === userId) {
         addMessage(data);
     }
 });
@@ -136,7 +137,7 @@ function addMessage(data){
             <div class="msg-time">${formatTime(data.createdAt)}</div>
         </div>
 
-        <div class="msg-options ${isMe ? 'left' : 'right'}" onclick="toggleMenu(this, event)">⋮</div>
+        <div class="msg-options ${isMe ? 'left' : 'right'}" onclick="toggleMenu(this, event)"><i class="fas fa-chevron-down"></i></div>
 
         <div class="msg-menu ${isMe ? 'left' : 'right'}">
             <div onclick="replyMessage('${data._id}')">Répondre</div>
@@ -319,12 +320,7 @@ document.getElementById('fileForm').addEventListener("submit", (e) => {
         replyTo: replyTo
     });
 
-    addMessage({
-        sender: userId,
-        message: msg,
-        createdAt: new Date(),
-        replyTo: null
-    });
+   
 
     msgInput.value = "";
     cancelReply();

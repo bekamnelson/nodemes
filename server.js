@@ -211,16 +211,26 @@ io.on("connection", (socket) => {
         io.emit("userStatus", { userId, status: "online" });
     });
 
-    socket.on("sendMessage", async (data) => {
-        const { sender, receiver, message, replyTo } = data;
-        const newMsg = new Message({ sender, receiver, message, replyTo });
-        await newMsg.save();
-        
-        // On repopulate pour l'affichage du tag en temps réel
-        const fullMsg = await Message.findById(newMsg._id).populate("replyTo");
-        io.to(receiver).emit("receiveMessage", fullMsg);
-        io.to(sender).emit("receiveMessage", fullMsg);
+   socket.on("sendMessage", async (data) => {
+    const { sender, receiver, message, replyTo } = data;
+
+    // A. Sauvegarde en base de données
+    const newMsg = new Message({
+        sender,
+        receiver,
+        message,
+        replyTo: replyTo || null
     });
+    await newMsg.save();
+
+    // B. RÉCUPÉRATION DEPUIS LA BASE (avec le texte du tag)
+    // C'est cette étape qui garantit que le message s'affiche avec son tag
+    const fullMsg = await Message.findById(newMsg._id).populate("replyTo");
+
+    // C. RENVOI AUX DEUX UTILISATEURS
+    io.to(receiver).emit("receiveMessage", fullMsg); // Pour l'ami
+    io.to(sender).emit("receiveMessage", fullMsg);   // POUR TOI (Déclenche l'affichage chez toi)
+});
 
     socket.on("getStatus", (userId) => {
         socket.emit("userStatus", { userId, status: onlineUsers[userId] ? "online" : "offline" });

@@ -261,6 +261,7 @@ body {
     border-left: 3px solid #00a884;
     margin-bottom: 5px;
     border-radius: 5px;
+    overflow: hidden;
 }
 
 .reply-box { background: #eee; border-left-color: blue; font-size: 12px; }
