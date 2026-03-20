@@ -172,6 +172,7 @@ style="width:40px; height:40px; border-radius:50%;">
             <form action="" id="fileForm">
                 <!-- <input type="file" id="fileInput" name="file">
                 <i class="far fa-smile" style="font-size: 1.2em; color: #aaa;"></i>-->
+                <div id="replyPreview" style="display:none;"></div>
             <input type="text" placeholder="Write a message..." id="msgInput">
             <i class="fas fa-microphone" style="color: #aaa;"></i>
             <button class="btn-send" type="submit"><i class="fas fa-paper-plane"></i></button>
@@ -187,52 +188,7 @@ style="width:40px; height:40px; border-radius:50%;">
 
 
 <script src="/chat.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Sélection des éléments
-    const chatItems = document.querySelectorAll('.chat-item');
-    const sidebar = document.querySelector('.sidebar');
-    const mainChat = document.querySelector('.main-chat');
-    const backBtn = document.getElementById('back-to-list');
 
-    // 1. Fonction pour ouvrir la discussion (Sur Mobile)
-    chatItems.forEach(item => {
-        item.addEventListener('click', () => {
-            // On vérifie si on est sur un écran mobile (moins de 769px)
-            if (window.innerWidth <= 768) {
-                // On cache la barre latérale
-                sidebar.style.display = 'none';
-                
-                // On force l'affichage de la zone de chat
-                mainChat.style.display = 'flex';
-                mainChat.style.width = '100%';
-            }
-        });
-    });
-
-    // 2. Fonction pour revenir à la liste (Sur Mobile)
-    if (backBtn) {
-        backBtn.addEventListener('click', () => {
-            // On réaffiche la barre latérale
-            sidebar.style.display = 'flex';
-            
-            // On cache à nouveau la zone de chat
-            mainChat.style.display = 'none';
-        });
-    }
-
-    // 3. Gestion du redimensionnement de la fenêtre
-    // Pour éviter que le chat disparaisse si on agrandit la fenêtre après avoir cliqué sur "retour"
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768) {
-            sidebar.style.display = 'flex';
-            mainChat.style.display = 'flex';
-        } else {
-            // Optionnel : logique par défaut pour le retour au format mobile
-        }
-    });
-});
-</script>
 
 
 </body>
