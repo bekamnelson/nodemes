@@ -15,25 +15,6 @@
     --msg-received: #ffffff;
     --border-color: #e9edef;
     --header-bg: #f0f2f5;
-    --modal-bg: #ffffff;
-}
-
-/* --- ADAPTATION MODE SOMBRE --- */
-body.dark {
-    --bg-light: #0b141a;
-    --white: #111b21;
-    --text-dark: #e9edef;
-    --text-gray: #8696a0;
-    --bg-app: #0b141a;
-    --bg-sidebar: #111b21;
-    --bg-chat: #0b141a;
-    --text-main: #e9edef;
-    --text-secondary: #8696a0;
-    --msg-sent: #005c4b;
-    --msg-received: #202c33;
-    --border-color: #222d34;
-    --header-bg: #202c33;
-    --modal-bg: #111b21;
 }
 
 * {
@@ -44,27 +25,21 @@ body.dark {
 }
 
 body {
-    background-color: var(--bg-app);
+    background-color: var(--bg-light);
     height: 100vh;
-    width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    margin: 0;
-    padding: 0;
-    transition: background 0.3s ease;
 }
 
 /* --- CONTAINER PRINCIPAL --- */
 .app-container {
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    max-width: 1100px;
+    height: 90vh;
     background: var(--white);
     display: flex;
-    max-width: none;
-    margin: 0;
-    border-radius: 0;
+    border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
@@ -72,11 +47,9 @@ body {
 /* --- SIDEBAR (Liste des chats) --- */
 .sidebar {
     width: 350px;
-    border-right: 1px solid var(--border-color);
+    border-right: 1px solid #eef;
     display: flex;
     flex-direction: column;
-    background: var(--bg-sidebar);
-    flex-shrink: 0;
 }
 
 .header-blue {
@@ -102,7 +75,7 @@ body {
 }
 
 .tab.active {
-    background: var(--bg-sidebar);
+    background: white;
     color: var(--primary-blue);
     font-weight: bold;
 }
@@ -113,14 +86,13 @@ body {
     display: flex;
     gap: 15px;
     overflow-x: auto;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .avatar-story {
     text-align: center;
     font-size: 0.8em;
     position: relative;
-    color: var(--text-main);
 }
 
 .avatar-story img {
@@ -135,7 +107,7 @@ body {
     width: 12px;
     height: 12px;
     background: var(--online-green);
-    border: 2px solid var(--bg-sidebar);
+    border: 2px solid white;
     border-radius: 50%;
     position: absolute;
     bottom: 25px;
@@ -153,9 +125,7 @@ body {
     flex: 1;
     padding: 8px;
     border-radius: 5px;
-    border: 1px solid var(--border-color);
-    background: var(--header-bg);
-    color: var(--text-main);
+    border: 1px solid #ccc;
 }
 
 .search-user button {
@@ -168,7 +138,7 @@ body {
 }
 
 #searchBar { transition: all 0.3s ease; }
-#searchResult { padding: 10px; color: var(--text-main); }
+#searchResult { padding: 10px; }
 
 /* Chat List */
 .chat-list { flex: 1; overflow-y: auto; }
@@ -179,15 +149,14 @@ body {
     padding: 15px;
     cursor: pointer;
     transition: 0.2s;
-    border-bottom: 1px solid var(--border-color);
 }
 
-.chat-item:hover { background: var(--header-bg); }
-.chat-item.active { background: var(--header-bg); }
+.chat-item:hover { background: #f9f9f9; }
+.chat-item.active { background: #eef5ff; }
 .chat-item img { width: 45px; height: 45px; border-radius: 50%; margin-right: 15px; }
-.chat-info { flex: 1; color: var(--text-main); }
-.chat-info h4 { font-size: 0.95em; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
-.chat-info p { font-size: 0.8em; color: var(--text-secondary); }
+.chat-info { flex: 1; }
+.chat-info h4 { font-size: 0.95em; margin-bottom: 4px; }
+.chat-info p { font-size: 0.8em; color: var(--text-gray); }
 
 .badge {
     background: #ff4757;
@@ -202,18 +171,16 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: var(--bg-chat);
-    height: 100%;
+    background: #fff;
 }
 
 .chat-header {
     padding: 15px 25px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #eee;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--header-bg);
-    color: var(--text-main);
+    background: var(--white);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -221,13 +188,11 @@ body {
 
 .messages-area {
     flex: 1;
-    padding: 20px 5%;
+    padding: 20px;
     overflow-y: auto;
-    background: var(--bg-chat);
+    background: #fcfdfe;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    box-sizing: border-box;
 }
 
 /* --- MESSAGES & BULLES --- */
@@ -242,47 +207,50 @@ body {
     margin: 5px;
     gap: 5px;
 }
+/* Dans ton fichier CSS */
 
 .msg-bubble {
     padding: 8px 12px;
     border-radius: 8px;
     position: relative;
+    /* On augmente ici : passe de 60% ou 70% à 80% sur grand écran */
     max-width: 80%; 
     word-wrap: break-word;
     cursor: pointer;
     box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
 }
 
-/* Desktop sizing */
+/* Optionnel : Si tu veux que ce soit encore plus large UNIQUEMENT sur PC */
 @media (min-width: 1024px) {
     .msg-bubble {
-        max-width: 75%; 
-        min-width: 100px;
-        padding: 10px 15px;
+        max-width: 700px; /* Limite fixe pour éviter l'effet "ligne infinie" */
+        min-width: 100px; /* Pour que les messages courts ne soient pas trop écrasés */
     }
 }
 
-/* Mobile specific fixes */
 @media (max-width: 1024px) {
-    .msg-bubble {
-        max-width: 70%;
-        padding: 10px 18px;
-        border-radius: 10px;
-        font-size: 0.9em;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        word-break: break-word;
-    }
+   .msg-bubble {
+    max-width: 70%;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    position: relative;
+    cursor: pointer;
+    /* --- AJOUTE CES DEUX LIGNES ICI --- */
+    word-wrap: break-word;       /* Pour les anciens navigateurs */
+    overflow-wrap: break-word;   /* Pour les navigateurs modernes */
+    word-break: break-all;       /* Force la coupure même s'il n'y a pas d'espace */
+}
 }
 
-.sent .msg-bubble { background: var(--msg-sent); color: var(--text-main); margin-left: auto; }
-.received .msg-bubble { background: var(--msg-received); color: var(--text-main); }
+.sent .msg-bubble { background: #d9fdd3; color: #444; margin-left: auto; }
+.received .msg-bubble { background: #f1f0f0; }
 
-.msg-time { font-size: 11px; color: var(--text-secondary); text-align: right; }
+.msg-time { font-size: 11px; color: gray; text-align: right; }
 
 .math-card {
-    background: var(--white);
-    border: 1px solid var(--border-color);
+    background: white;
+    border: 1px solid #ddd;
     border-radius: 10px;
     padding: 10px;
     margin-top: 10px;
@@ -292,14 +260,14 @@ body {
 .msg-options {
     cursor: pointer;
     font-size: 18px;
-    color: var(--text-secondary);
+    color: gray;
     padding: 5px;
     opacity: 0;
     transition: 0.2s;
 }
 
 .msg-container:hover .msg-options { opacity: 1; }
-.msg-options:hover { color: var(--text-main); }
+.msg-options:hover { color: black; }
 
 .msg-options.left { order: -1; margin-right: 8px; }
 .msg-options.right { order: 2; margin-left: 8px; }
@@ -308,19 +276,18 @@ body {
     display: none;
     position: absolute;
     top: 30px;
-    background: var(--modal-bg);
+    background: white;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     z-index: 9999;
     min-width: 120px;
-    border: 1px solid var(--border-color);
 }
 
 .msg-menu.left { left: 0; }
 .msg-menu.right { right: 0; }
 
-.msg-menu div { padding: 8px 10px; cursor: pointer; color: var(--text-main); }
-.msg-menu div:hover { background: var(--header-bg); }
+.msg-menu div { padding: 8px 10px; cursor: pointer; }
+.msg-menu div:hover { background: #f2f2f2; }
 
 /* Réponses & Previews */
 .reply-preview, .reply-box {
@@ -332,17 +299,18 @@ body {
     overflow: hidden;
 }
 
-.reply-box { background: var(--header-bg); border-left-color: var(--primary-blue); font-size: 12px; color: var(--text-main); }
+.reply-box { background: #eee; border-left-color: blue; font-size: 12px; }
 .reply-preview small { color: #00a884; font-weight: bold; }
-.reply-preview p { margin: 0; font-size: 13px; color: var(--text-secondary); }
+.reply-preview p { margin: 0; font-size: 13px; }
 
 /* --- ZONE D'ENTRÉE MODIFIÉE --- */
 .input-area {
     display: flex;
     flex-direction: column; 
-    background: var(--header-bg);
+    background: var(--white);
     padding: 10px 15px;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid #eee;
+    /* Pour que la preview semble flotter au-dessus si besoin */
     position: relative; 
 }
 
@@ -357,16 +325,9 @@ body {
     flex: 1;
     padding: 12px 20px;
     border-radius: 25px;
-    border: 1px solid var(--border-color);
-    background: var(--white);
-    color: var(--text-main);
+    border: 1px solid #ddd;
     outline: none;
     min-width: 0;
-}
-
-#msgInput:focus {
-    border-color: var(--primary-blue);
-    background: var(--white);
 }
 
 .btn-send {
@@ -405,13 +366,13 @@ body {
         display: flex;
         justify-content: space-around;
         padding: 15px;
-        border-top: 1px solid var(--border-color);
-        background: var(--bg-sidebar);
+        border-top: 1px solid #eee;
+        background: white;
     }
     .navhidden2 { display: none; }
 }
 
-/* Desktop Navigation */
+/* Desktop */
 @media (min-width: 769px) {
     .nav-mobile {
         width: 70px;
@@ -421,7 +382,7 @@ body {
         align-items: center;
         padding: 20px 0;
         gap: 30px;
-        border-right: 1px solid var(--border-color);
+        border-right: 1px solid #ddd;
     }
     
     .nav-item {
@@ -435,18 +396,17 @@ body {
     .nav-item.settings { margin-top: auto; }
     .navhidden { display: none; }
 }
-
 /* --- DESIGN DE LA RÉPONSE (REPLY PREVIEW) --- */
 .reply-preview-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--header-bg);
-    border-left: 4px solid #00a884;
+    background: #f7f7f7; /* Gris très clair */
+    border-left: 4px solid #00a884; /* La barre verticale verte */
     padding: 10px 15px;
     margin-bottom: 8px;
-    border-radius: 8px;
-    animation: slideUp 0.2s ease-out;
+    border-radius: 8px; /* Coins arrondis pour un look moderne */
+    animation: slideUp 0.2s ease-out; /* Petite animation à l'apparition */
 }
 
 @keyframes slideUp {
@@ -456,12 +416,12 @@ body {
 
 .reply-content {
     flex: 1;
-    min-width: 0;
+    min-width: 0; /* Important pour que le texte se coupe (ellipsis) */
 }
 
 .reply-content small {
     display: block;
-    color: #00a884;
+    color: #00a884; /* Couleur du nom */
     font-weight: bold;
     margin-bottom: 2px;
 }
@@ -469,30 +429,51 @@ body {
 .reply-content p {
     margin: 0;
     font-size: 0.85em;
-    color: var(--text-secondary);
+    color: #555;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    text-overflow: ellipsis; /* Coupe le texte trop long avec "..." */
 }
 
 .cancel-reply {
     background: none;
     border: none;
-    color: var(--text-gray);
+    color: #999;
     cursor: pointer;
     font-size: 1.1em;
     padding: 0 5px;
     transition: color 0.2s;
 }
 
-.cancel-reply:hover { color: var(--text-main); }
+.cancel-reply:hover {
+    color: #333;
+}
+#msgInput {
+    flex: 1;
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    outline: none;
+}
 
-/* --- MODALES --- */
+#msgInput:focus {
+    border-color: var(--primary-blue);
+    background: #fff;
+}
+
+.chat-info h4 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Ajoute "..." si c'est trop long */
+    max-width: 200px;
+}
+
 .modal-overlay {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.7); /* Fond noir semi-transparent */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -500,20 +481,18 @@ body {
 }
 
 .modal-content {
-    background: var(--modal-bg);
+    background: white;
     width: 90%;
     max-width: 400px;
     border-radius: 10px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
 }
 
-.modal-header { padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+.modal-header { padding: 15px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
 .modal-body { max-height: 300px; overflow-y: auto; padding: 10px; }
-.modal-footer { padding: 15px; border-top: 1px solid var(--border-color); text-align: right; }
+.modal-footer { padding: 15px; border-top: 1px solid #ddd; text-align: right; }
 
 .contact-transfer-item {
     display: flex;
@@ -522,11 +501,10 @@ body {
     cursor: pointer;
     border-radius: 5px;
     transition: 0.2s;
-    color: var(--text-main);
 }
 
-.contact-transfer-item:hover { background: var(--header-bg); }
-.contact-transfer-item.selected { background: var(--msg-sent); color: var(--text-main); border: 1px solid #00a884; }
+.contact-transfer-item:hover { background: #f0f0f0; }
+.contact-transfer-item.selected { background: #e7fce3; border: 1px solid #00a884; }
 
 .contact-transfer-item img { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; }
 
@@ -535,43 +513,94 @@ body {
     padding: 10px 20px; border-radius: 5px; cursor: pointer;
 }
 .btn-confirm:disabled { background: #ccc; cursor: not-allowed; }
-/* --- FORCE L'ÉCRITURE EN MODE SOMBRE --- */
-body.dark, 
-body.dark input, 
-body.dark textarea, 
-body.dark button, 
-body.dark select {
-    color: var(--text-main); /* Utilise ton blanc cassé #e9edef */
+
+/* Le conteneur qui enveloppe toute l'interface (sidebar + chat) */
+.app-container {
+    width: 100vw;       /* 100% de la largeur de la fenêtre */
+    height: 100vh;      /* 100% de la hauteur de la fenêtre */
+    max-width: none;    /* Supprime toute limite de largeur */
+    margin: 0;          /* Supprime les marges de centrage */
+    display: flex;      /* Aligne sidebar et chat côte à côte */
+    border-radius: 0;   /* Enlève les bords arrondis si tu en avais */
 }
 
-/* Cible spécifiquement les éléments qui pourraient résister */
-body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6 {
+.sidebar {
+    width: 350px;       /* Largeur fixe pour la liste des contacts */
+    flex-shrink: 0;     /* Empêche la sidebar de rétrécir */
+}
+
+.main-chat {
+    flex: 1;            /* Prend TOUT l'espace restant à droite */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.messages-area {
+    width: 100%;
+    padding: 20px 5%;   /* Ajoute un peu de marge sur les côtés pour l'esthétique */
+    box-sizing: border-box;
+}
+
+/* Les bulles de messages sur PC */
+@media (min-width: 1024px) {
+    .msg-bubble {
+        /* On permet aux messages de prendre jusqu'à 75% de la largeur totale */
+        max-width: 75%; 
+        padding: 10px 15px;
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Empêche le scroll sur toute la page, seul le chat doit scroller */
+}
+
+body.dark {
+    /* Couleurs Thème Sombre */
+    --bg-app: #0b141a;           /* Fond très sombre */
+    --bg-sidebar: #111b21;       /* Sidebar légèrement plus claire */
+    --bg-chat: #0b141a;          /* Zone de messages */
+    --text-main: #e9edef;        /* Texte presque blanc */
+    --text-secondary: #8696a0;   /* Texte gris bleu */
+    --msg-sent: #005c4b;         /* Vert foncé pour tes messages */
+    --msg-received: #202c33;     /* Gris foncé pour les reçus */
+    --border-color: #222d34;     /* Bordures discrètes */
+    --header-bg: #202c33;        /* En-tête sombre */
+}
+body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    transition: background 0.3s ease; /* Transition douce lors du switch */
+}
+
+.sidebar {
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+}
+
+.chat-item:hover {
+    background-color: var(--header-bg); /* Effet de survol sombre */
+}
+
+.main-chat {
+    background-color: var(--bg-chat);
+}
+
+.msg.sent .msg-bubble {
+    background-color: var(--msg-sent);
     color: var(--text-main);
 }
 
-body.dark p, body.dark span, body.dark div, body.dark small {
+.msg.received .msg-bubble {
+    background-color: var(--msg-received);
     color: var(--text-main);
 }
 
-/* Pour les textes secondaires (heures, aperçus de messages) */
-body.dark .msg-time, 
-body.dark .chat-info p, 
-body.dark .reply-preview p {
-    color: var(--text-secondary) !important; /* Utilise ton gris bleu #8696a0 */
-}
-
-/* Correction pour les placeholders (le texte "Tapez un message...") */
-body.dark input::placeholder {
-    color: var(--text-secondary);
-    opacity: 0.7;
-}
-
-/* Correction pour les icônes FontAwesome si tu en utilises */
-body.dark i {
-    color: var(--text-secondary);
-}
-
-body.dark .nav-item.active i, 
-body.dark .nav-item:hover i {
-    color: var(--primary-blue);
+/* On oublie pas l'input de message */
+#msgInput {
+    background-color: var(--bg-sidebar);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
 }
