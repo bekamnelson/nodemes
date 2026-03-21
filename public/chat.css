@@ -26,7 +26,7 @@
 
 body {
     background-color: var(--bg-light);
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -557,50 +557,3 @@ body {
     overflow: hidden; /* Empêche le scroll sur toute la page, seul le chat doit scroller */
 }
 
-body.dark {
-    /* Couleurs Thème Sombre */
-    --bg-app: #0b141a;           /* Fond très sombre */
-    --bg-sidebar: #111b21;       /* Sidebar légèrement plus claire */
-    --bg-chat: #0b141a;          /* Zone de messages */
-    --text-main: #e9edef;        /* Texte presque blanc */
-    --text-secondary: #8696a0;   /* Texte gris bleu */
-    --msg-sent: #005c4b;         /* Vert foncé pour tes messages */
-    --msg-received: #202c33;     /* Gris foncé pour les reçus */
-    --border-color: #222d34;     /* Bordures discrètes */
-    --header-bg: #202c33;        /* En-tête sombre */
-}
-body {
-    background-color: var(--bg-app);
-    color: var(--text-main);
-    transition: background 0.3s ease; /* Transition douce lors du switch */
-}
-
-.sidebar {
-    background-color: var(--bg-sidebar);
-    border-right: 1px solid var(--border-color);
-}
-
-.chat-item:hover {
-    background-color: var(--header-bg); /* Effet de survol sombre */
-}
-
-.main-chat {
-    background-color: var(--bg-chat);
-}
-
-.msg.sent .msg-bubble {
-    background-color: var(--msg-sent);
-    color: var(--text-main);
-}
-
-.msg.received .msg-bubble {
-    background-color: var(--msg-received);
-    color: var(--text-main);
-}
-
-/* On oublie pas l'input de message */
-#msgInput {
-    background-color: var(--bg-sidebar);
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-}
