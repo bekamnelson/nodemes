@@ -26,7 +26,7 @@
 
 body {
     background-color: var(--bg-light);
-    min-height: 100vh;
+    height: 80vh;
     display: flex;
     justify-content: center;
     align-items: center;
