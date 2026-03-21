@@ -134,12 +134,16 @@ app.get("/contacts/:userId", async (req, res) => {
 app.get("/messages/:userId/:receiverId", async (req, res) => {
     try {
         const { userId, receiverId } = req.params;
-        const messages = await Message.find({
-            $or: [
-                { sender: userId, receiver: receiverId },
-                { sender: receiverId, receiver: userId }
-            ]
-        }).sort({ createdAt: 1 }).populate("replyTo");
+     const messages = await Message.find({
+    $or: [
+        { sender: userId, receiver: receiverId },
+        { sender: receiverId, receiver: userId }
+    ]
+}).sort({ createdAt: 1 })
+  .populate({
+      path: 'replyTo',
+      populate: { path: 'sender', select: 'username' } // On récupère le nom de l'expéditeur du message original
+  });
         res.json({ success: true, messages });
     } catch (err) { res.json({ success: false }); }
 });
@@ -147,24 +151,44 @@ app.get("/messages/:userId/:receiverId", async (req, res) => {
 app.get("/conversations/:userId", async (req, res) => {
     try {
         const userId = req.params.userId;
+
+        // 1. On récupère les messages et on "remplit" (populate) les infos des utilisateurs
         const messages = await Message.find({
             $or: [{ sender: userId }, { receiver: userId }]
-        }).sort({ createdAt: -1 });
+        })
+        .sort({ createdAt: -1 })
+        .populate("sender", "username email profilePic") // On récupère ces 3 champs
+        .populate("receiver", "username email profilePic");
 
         const conversations = {};
+
         messages.forEach(msg => {
-            const otherUser = msg.sender == userId ? msg.receiver : msg.sender;
-            if (!conversations[otherUser]) {
-                conversations[otherUser] = {
+            // Déterminer qui est "l'autre" personne
+            // Si le sender est moi, l'autre est le receiver. Sinon c'est le sender.
+            const otherUser = msg.sender._id.toString() === userId ? msg.receiver : msg.sender;
+            const otherId = otherUser._id.toString();
+
+            if (!conversations[otherId]) {
+                conversations[otherId] = {
                     lastMessage: msg.message,
                     date: msg.createdAt,
-                    unread: 0
+                    unread: 0,
+                    // ON AJOUTE LES INFOS ICI :
+                    username: otherUser.username, 
+                    email: otherUser.email,
+                    profilePic: otherUser.profilePic
                 };
             }
-            if (msg.receiver == userId && !msg.seen) conversations[otherUser].unread++;
+            if (msg.receiver._id.toString() === userId && !msg.seen) {
+                conversations[otherId].unread++;
+            }
         });
+
         res.json({ success: true, conversations });
-    } catch (err) { res.json({ success: false }); }
+    } catch (err) {
+        console.error(err);
+        res.json({ success: false });
+    }
 });
 
 app.post("/markSeen", async (req, res) => {
@@ -174,20 +198,70 @@ app.post("/markSeen", async (req, res) => {
 });
 
 app.post("/editMessage", async (req, res) => {
-    await Message.findByIdAndUpdate(req.body.id, { message: req.body.newText, edited: true });
-    res.json({ success: true });
+    try {
+        const { id, newText } = req.body;
+        const msg = await Message.findByIdAndUpdate(id, { message: newText, edited: true }, { new: true });
+        
+        if (msg) {
+            // On prévient tout le monde que le message a changé
+            io.to(msg.receiver.toString()).emit("messageEdited", { id, newText });
+            io.to(msg.sender.toString()).emit("messageEdited", { id, newText });
+        }
+        res.json({ success: true });
+    } catch (err) {
+        res.json({ success: false });
+    }
 });
 
 app.post("/deleteMessage", async (req, res) => {
-    await Message.findByIdAndUpdate(req.body.id, { deleted: true, message: "" });
-    res.json({ success: true });
+    try {
+        const { id } = req.body;
+        const msg = await Message.findById(id);
+
+        if (!msg) return res.json({ success: false, message: "Message introuvable" });
+
+        if (msg.deleted) {
+            // DEUXIÈME CLIC : Suppression définitive
+            await Message.findByIdAndDelete(id);
+            io.to(msg.receiver.toString()).emit("messageHardDeleted", id);
+            io.to(msg.sender.toString()).emit("messageHardDeleted", id);
+            return res.json({ success: true, action: "hard_delete" });
+        } else {
+            // PREMIER CLIC : Marquage comme supprimé
+            msg.deleted = true;
+            msg.message = "🚫 Ce message a été supprimé";
+            await msg.save();
+            
+            io.to(msg.receiver.toString()).emit("messageSoftDeleted", { id, text: msg.message });
+            io.to(msg.sender.toString()).emit("messageSoftDeleted", { id, text: msg.message });
+            return res.json({ success: true, action: "soft_delete" });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false });
+    }
 });
 
 app.post("/forwardMessage", async (req, res) => {
-    const msg = await Message.findById(req.body.id);
-    const newMsg = new Message({ sender: msg.sender, receiver: req.body.newReceiver, message: msg.message });
-    await newMsg.save();
-    res.json({ success: true });
+    try {
+        const { id, newReceiver } = req.body;
+        const originalMsg = await Message.findById(id);
+
+        const newMsg = new Message({
+            sender: req.body.userId || originalMsg.sender, // ou via ta session
+            receiver: newReceiver,
+            message: originalMsg.message,
+            isForwarded: true, // Optionnel : pour mettre un label
+            createdAt: new Date()
+        });
+
+        await newMsg.save();
+
+        // C'EST CETTE LIGNE QUI MANQUE :
+        res.json({ success: true, message: newMsg }); 
+        
+    } catch (err) {
+        res.json({ success: false });
+    }
 });
 
 app.post("/upload", upload.single("file"), async (req, res) => {
@@ -225,8 +299,11 @@ io.on("connection", (socket) => {
 
     // B. RÉCUPÉRATION DEPUIS LA BASE (avec le texte du tag)
     // C'est cette étape qui garantit que le message s'affiche avec son tag
-    const fullMsg = await Message.findById(newMsg._id).populate("replyTo");
-
+const fullMsg = await Message.findById(newMsg._id)
+    .populate({
+        path: 'replyTo',
+        populate: { path: 'sender', select: 'username' }
+    });
     // C. RENVOI AUX DEUX UTILISATEURS
     io.to(receiver).emit("receiveMessage", fullMsg); // Pour l'ami
     io.to(sender).emit("receiveMessage", fullMsg);   // POUR TOI (Déclenche l'affichage chez toi)

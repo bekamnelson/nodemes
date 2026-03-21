@@ -31,7 +31,7 @@
 
 
 
-        <div class="nav-item"><i class="fas fa-tasks"></i></div>
+        <!-- <i class="fas fa-tasks" onclick="openSettings()"></i>-->
         <div class="nav-item"><i class="fas fa-user" onclick="showContacts()"></i></div>
        <a href="profile.html"> <div class="nav-item settings"><i class="fas fa-cog"></i></div></a>
     </nav>
@@ -114,8 +114,8 @@
            <!-- <i class="fas fa-home" ></i>-->
            <i class="fas fa-comment-dots" onclick="showConversations()"></i>
             <i class="fas fa-user" onclick="showContacts()"></i>
-            <i class="fas fa-tasks"></i>
-           <a href="profile.html"> <div class="nav-item settings"><i class="fas fa-cog"></i></div></a>
+            <!--<i class="fas fa-tasks" onclick="openSettings()"></i>-->
+           <div class="nav-item settings"> <a href="profile.html"></a><i class="fas fa-cog"></i></a></div>
         </div>
     </div>
 
@@ -168,22 +168,71 @@ style="width:40px; height:40px; border-radius:50%;">
             </div>
         </div>
 
-        <div class="input-area">
-            <form action="" id="fileForm">
-                <!-- <input type="file" id="fileInput" name="file">
-                <i class="far fa-smile" style="font-size: 1.2em; color: #aaa;"></i>-->
-                <div id="replyPreview" style="display:none;"></div>
-            <input type="text" placeholder="Write a message..." id="msgInput">
-            <i class="fas fa-microphone" style="color: #aaa;"></i>
-            <button class="btn-send" type="submit"><i class="fas fa-paper-plane"></i></button>
-            </form>
-            
-        </div>
+
+<!-- parametre-->
+ <div id="settingsPage" style="display:none; padding:20px;">
+
+    <h3>Paramètres</h3>
+
+    <div onclick="toggleTheme()" style="padding:10px; cursor:pointer;">
+        🌙 Mode sombre / clair
     </div>
+
+    <div onclick="logout()" style="padding:10px; color:red; cursor:pointer;">
+        🚪 Déconnexion
+    </div>
+
 </div>
 
 
 
+
+
+
+
+
+
+
+
+
+       
+            <div class="input-area">
+    <div id="replyPreview" class="reply-preview-container" style="display:none;">
+        <div class="reply-content">
+            <small id="replyUser" style="color: var(--blue-main); font-weight: bold;"></small>
+            <p id="replyText"></p>
+        </div>
+        <button type="button" onclick="cancelReply()" class="cancel-reply">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <form action="" id="fileForm">
+          <!-- <input type="file" id="fileInput" name="file">
+                <i class="far fa-smile" style="font-size: 1.2em; color: #aaa;"></i>-->
+        <i class="far fa-smile" style="font-size: 1.2em; color: #aaa; margin-right: 10px;"></i>
+        <input type="text" placeholder="Écrire un message..." id="msgInput">
+        <button class="btn-send" type="submit"><i class="fas fa-paper-plane"></i></button>
+    </form>
+</div>
+        </div>
+    </div>
+
+<!-- boite de transfert des message-->
+<div id="forwardModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Transférer à...</h3>
+            <button onclick="closeForwardModal()" class="close-btn">&times;</button>
+        </div>
+        <div id="forwardContactList" class="modal-body">
+            </div>
+        <div class="modal-footer">
+            <span id="selectedCount" style="margin-right: 15px; font-size: 0.9em; color: #666;">0 sélectionné(s)</span>
+            <button id="confirmForward" class="btn-confirm" disabled>Envoyer</button>
+        </div>
+    </div>
+</div>
 <script src="/socket.io/socket.io.js"></script>
 
 
