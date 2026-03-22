@@ -273,6 +273,16 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     res.json({ success: true, data: newMsg });
 });
 
+
+app.post("/logout", (req, res) => {
+    const { userId } = req.body;
+    
+    // Si tu avais un système de tokens (JWT) en base de données, 
+    // c'est ici que tu le supprimerais.
+    
+    console.log(`Utilisateur ${userId} déconnecté manuellement.`);
+    res.json({ success: true });
+});
 // --- 8. LOGIQUE SOCKET.IO ---
 let onlineUsers = {};
 

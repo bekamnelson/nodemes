@@ -1,5 +1,13 @@
 const form = document.getElementById("loginForm");
-
+// --- VÉRIFICATION DE CONNEXION AUTOMATIQUE ---
+window.onload = () => {
+    const userId = localStorage.getItem("userId");
+    
+    // Si l'ID existe, on ne reste pas sur login.html, on file au chat !
+    if (userId) {
+        window.location.href = "chat.html";
+    }
+};
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
