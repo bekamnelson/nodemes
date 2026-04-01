@@ -6,6 +6,9 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const multer = require("multer");
 const path = require("path");
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
 require('dotenv').config();
 
 const app = express();
@@ -26,6 +29,23 @@ const PORT = process.env.PORT || 3000;
 mongoose.connect(mongoURI)
     .then(() => console.log(`✅ Connecté à MongoDB`))
     .catch(err => console.error("❌ Erreur MongoDB :", err));
+
+// --- 3. CONFIGURATION CLAUDINARY ---
+    cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storageCloud = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'studychat_uploads',
+        allowed_formats: ['jpg', 'png', 'jpeg', 'pdf', 'docx'],
+        resource_type: 'auto'
+    },
+});
+const uploadCloud = multer({ storage: storageCloud });
 
 // --- 3. MODÈLES (SCHEMAS) ---
 const userSchema = new mongoose.Schema({
@@ -94,14 +114,13 @@ app.post("/updateProfile", async (req, res) => {
     } catch (err) { res.json({ success: false }); }
 });
 
-app.post("/uploadProfilePic", upload.single("image"), async (req, res) => {
+app.post("/uploadProfilePic", uploadCloud.single("image"), async (req, res) => {
     try {
-        const imageUrl = "/uploads/" + req.file.filename;
+        const imageUrl = req.file.path; // L'URL Cloudinary directe
         await User.findByIdAndUpdate(req.body.userId, { profilePic: imageUrl });
         res.json({ success: true, imageUrl });
     } catch (err) { res.json({ success: false }); }
 });
-
 // --- 6. ROUTES CONTACTS ---
 app.post("/searchUser", async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
@@ -264,13 +283,16 @@ app.post("/forwardMessage", async (req, res) => {
     }
 });
 
-app.post("/upload", upload.single("file"), async (req, res) => {
-    const { sender, receiver, message } = req.body;
-    const newMsg = new Message({ sender, receiver, message, file: req.file ? `/uploads/${req.file.filename}` : null });
-    await newMsg.save();
-    io.to(receiver).emit("receiveMessage", newMsg);
-    io.to(sender).emit("receiveMessage", newMsg);
-    res.json({ success: true, data: newMsg });
+app.post("/upload", uploadCloud.single("file"), async (req, res) => {
+    try {
+        const { sender, receiver, message } = req.body;
+        const fileUrl = req.file ? req.file.path : null;
+        const newMsg = new Message({ sender, receiver, message, file: fileUrl });
+        await newMsg.save();
+        io.to(receiver).emit("receiveMessage", newMsg);
+        io.to(sender).emit("receiveMessage", newMsg);
+        res.json({ success: true, data: newMsg });
+    } catch (err) { res.json({ success: false }); }
 });
 
 
