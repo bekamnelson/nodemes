@@ -139,3 +139,38 @@ body, html {
 .save-btn:active {
     transform: scale(0.98);
 }
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.2); /* Fond semi-transparent */
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: none; /* MASQUÉ PAR DÉFAUT */
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: 0.3s;
+    z-index: 10;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* 2. Rendre le bouton VISIBLE uniquement sur petit écran */
+@media (max-width: 768px) {
+    .back-btn {
+        display: flex; /* DEVIENT VISIBLE SUR MOBILE */
+    }
+    
+    /* On ajuste un peu le header pour que le bouton ne touche pas le contenu */
+    .profile-header {
+        position: relative; 
+        padding-top: 50px; 
+    }
+}
