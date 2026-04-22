@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixiChat — Connexion</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg);
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 70% at 30% 20%, rgba(124,106,255,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 50% at 80% 80%, rgba(0,229,204,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .auth-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    animation: cardIn 0.4s ease;
+  }
+  @keyframes cardIn {
+    from { opacity:0; transform:translateY(20px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+
+  .auth-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 4px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .auth-sub {
+    text-align: center;
+    color: var(--text2);
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+  }
+
+  .form-fields { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+
+  .input-wrap {
+    position: relative;
+  }
+  .input-wrap i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+  .input-wrap input {
+    background: var(--input-bg);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 13px 16px 13px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    outline: none;
+    transition: 0.2s;
+    width: 100%;
+  }
+  .input-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .input-wrap input::placeholder { color: var(--text3); }
+
+  .auth-footer {
+    text-align: center;
+    font-size: 0.88rem;
+    color: var(--text2);
+    margin-top: 20px;
+  }
+  .auth-footer a { color: var(--accent); font-weight: 600; }
+
+  #loginBtn {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
+    position: relative;
+  }
+  #loginBtn.loading { opacity: 0.7; pointer-events: none; }
+  #loginBtn .spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  }
+  #loginBtn.loading .spinner { display: block; }
+  @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="auth-card">
+  <div class="auth-logo"><img src="/images/logo.png" style="width:36px;height:36px;border-radius:10px;object-fit:cover;margin-right:4px">PixiChat</div>
+  <p class="auth-sub">Bon retour parmi nous 👋</p>
+
+  <div class="form-fields">
+    <div class="input-wrap">
+      <i class="fas fa-envelope"></i>
+      <input type="email" id="email" placeholder="Adresse email" autocomplete="email" required>
+    </div>
+    <div class="input-wrap">
+      <i class="fas fa-lock"></i>
+      <input type="password" id="password" placeholder="Mot de passe" autocomplete="current-password" required>
+    </div>
+  </div>
+
+  <button class="btn-primary" id="loginBtn" onclick="doLogin()">
+    Se connecter
+    <div class="spinner"></div>
+  </button>
+
+  <p class="auth-footer">Pas encore inscrit ? <a href="/signup.html">Créer un compte</a></p>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="/js/config.js"></script>
+<script>
+  // Apply theme
+  if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark");
+  // Redirect if already logged in
+  if (localStorage.getItem("userId")) window.location.href = "/chat.html";
+
+  function showToast(msg, type = '') {
+    const t = document.createElement('div');
+    t.className = 'toast ' + type;
+    t.textContent = msg;
+    document.getElementById('toast-container').appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+
+  async function doLogin() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    if (!email || !password) return showToast("Remplissez tous les champs", "error");
+
+    const btn = document.getElementById("loginBtn");
+    btn.classList.add("loading");
+
+    try {
+      const res = await fetch(`${SERVER_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (data.success && data.user && data.user._id) {
+        localStorage.setItem("userId", data.user._id);
+        localStorage.setItem("userProfile", JSON.stringify({
+          username: data.user.username,
+          email: data.user.email,
+          profilePic: data.user.profilePic
+        }));
+        window.location.href = "/chat.html";
+      } else {
+        showToast(data.message || "Identifiants incorrects", "error");
+        btn.classList.remove("loading");
+      }
+    } catch (err) {
+      showToast("Erreur de connexion au serveur", "error");
+      btn.classList.remove("loading");
+    }
+  }
+
+  // Enter key support
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") doLogin();
+  });
+</script>
+</body>
+</html>

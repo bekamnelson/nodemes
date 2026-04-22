@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixiChat — Mon Profil</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(124,106,255,0.12) 0%, transparent 60%);
+    pointer-events:none;
+  }
+  .profile-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    width: 100%; max-width: 440px; overflow: hidden;
+    animation: cardIn 0.4s ease;
+  }
+  @keyframes cardIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+  .profile-hero {
+    background: linear-gradient(135deg, var(--accent) 0%, #00e5cc 100%);
+    padding: 36px 24px 28px;
+    text-align: center; position: relative; color: #fff;
+  }
+  .back-link {
+    position: absolute; top: 16px; left: 16px;
+    background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+    width: 36px; height: 36px; color: #fff; font-size: 0.95rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.2s; text-decoration: none;
+  }
+  .back-link:hover { background: rgba(255,255,255,0.35); }
+
+  .avatar-wrap {
+    position: relative; display: inline-block; margin-bottom: 14px;
+  }
+  #profileImg {
+    width: 88px; height: 88px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.6); object-fit: cover;
+  }
+  .avatar-edit-btn {
+    position: absolute; bottom: 0; right: 0;
+    background: #fff; color: var(--accent); width: 28px; height: 28px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; cursor: pointer; border: 2px solid var(--accent);
+  }
+  .profile-hero h2 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; }
+  .profile-hero p { opacity: 0.85; font-size: 0.85rem; margin-top: 4px; }
+
+  .profile-body { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .save-btn { margin-top: 8px; width: 100%; padding: 14px; border-radius: var(--radius-sm); font-size: 0.95rem; }
+
+  .upload-hint { font-size: 0.75rem; color: var(--text3); text-align: center; margin-top: -8px; }
+</style>
+</head>
+<body>
+
+<div class="profile-card">
+  <div class="profile-hero">
+    <a href="/chat.html" class="back-link"><i class="fas fa-arrow-left"></i></a>
+    <div class="avatar-wrap">
+      <img id="profileImg" src="/images/noprofil.png" alt="Photo de profil">
+      <label for="imageInput" class="avatar-edit-btn" title="Changer la photo">
+        <i class="fas fa-camera"></i>
+      </label>
+      <input type="file" id="imageInput" accept="image/*" style="display:none">
+    </div>
+    <h2 id="heroName">Mon Profil</h2>
+    <p id="heroEmail"></p>
+  </div>
+
+  <div class="profile-body">
+    <div class="field">
+      <label>Nom d'utilisateur</label>
+      <input type="text" id="username" placeholder="Votre nom">
+    </div>
+    <div class="field">
+      <label>Adresse Email</label>
+      <input type="email" id="email" placeholder="votre@email.com">
+    </div>
+    <button class="btn-primary save-btn" onclick="updateProfile()">
+      <i class="fas fa-save" style="margin-right:8px"></i>Enregistrer
+    </button>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="/js/config.js"></script>
+<script>
+  const userId = localStorage.getItem("userId");
+  if (!userId) window.location.href = "/login.html";
+  if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark");
+
+  function showToast(msg, type = "") {
+    const t = document.createElement("div");
+    t.className = "toast " + type;
+    t.textContent = msg;
+    document.getElementById("toast-container").appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+
+  async function loadProfile() {
+    try {
+      const res = await fetch(`${SERVER_URL}/user/${userId}`);
+      const data = await res.json();
+      if (!data.user) return;
+      const u = data.user;
+      document.getElementById("username").value = u.username || "";
+      document.getElementById("email").value = u.email || "";
+      document.getElementById("profileImg").src = u.profilePic || "/images/noprofil.png";
+      document.getElementById("heroName").textContent = u.username || "Mon Profil";
+      document.getElementById("heroEmail").textContent = u.email || "";
+    } catch (e) {
+      // Offline: use cached profile
+      const cached = JSON.parse(localStorage.getItem("userProfile") || "{}");
+      if (cached.username) {
+        document.getElementById("username").value = cached.username;
+        document.getElementById("email").value = cached.email || "";
+        document.getElementById("profileImg").src = cached.profilePic || "/images/noprofil.png";
+        document.getElementById("heroName").textContent = cached.username;
+        document.getElementById("heroEmail").textContent = cached.email || "";
+      }
+    }
+  }
+
+  async function updateProfile() {
+    const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
+    if (!username || !email) return showToast("Remplissez tous les champs", "error");
+
+    try {
+      const res = await fetch(`${SERVER_URL}/updateProfile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, username, email })
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem("userProfile", JSON.stringify({ username, email, profilePic: data.user.profilePic }));
+        document.getElementById("heroName").textContent = username;
+        showToast("Profil mis à jour ✓", "success");
+      } else { showToast("Erreur mise à jour", "error"); }
+    } catch (e) { showToast("Erreur serveur", "error"); }
+  }
+
+  document.getElementById("imageInput").addEventListener("change", async () => {
+    const file = document.getElementById("imageInput").files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("userId", userId);
+    showToast("Upload en cours...");
+    try {
+      const res = await fetch(`${SERVER_URL}/uploadProfilePic`, { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById("profileImg").src = data.imageUrl;
+        const cached = JSON.parse(localStorage.getItem("userProfile") || "{}");
+        cached.profilePic = data.imageUrl;
+        localStorage.setItem("userProfile", JSON.stringify(cached));
+        showToast("Photo mise à jour ✓", "success");
+      } else { showToast("Erreur upload", "error"); }
+    } catch (e) { showToast("Erreur serveur", "error"); }
+  });
+
+  loadProfile();
+</script>
+</body>
+</html>

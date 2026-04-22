@@ -1,0 +1,62 @@
+{
+  "name": "pixichat",
+  "version": "2.0.0",
+  "description": "PixiChat — La messagerie étudiante",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "dev": "nodemon server.js",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "server": "node server.js"
+  },
+  "keywords": [],
+  "author": "Nelson",
+  "license": "MIT",
+  "build": {
+    "appId": "com.pixichat.app",
+    "productName": "PixiChat",
+    "win": {
+      "target": "nsis",
+      "icon": "public/images/logo.png"
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "npmRebuild": false,
+    "asar": true
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^2.2.2",
+    "cloudinary": "^1.41.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "electron-squirrel-startup": "^1.0.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.3.0",
+    "multer": "^2.1.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-rpm": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.11.1",
+    "@electron-forge/plugin-fuses": "^7.11.1",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^41.1.1",
+    "electron-builder": "^26.8.1",
+    "nodemon": "^3.1.14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bekamnelson/nodemes.git"
+  }
+}

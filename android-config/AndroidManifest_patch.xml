@@ -1,0 +1,39 @@
+<!--
+  PIXICHAT — AndroidManifest.xml (extrait)
+  
+  Après avoir lancé : npx cap add android
+  
+  Ouvrez : android/app/src/main/AndroidManifest.xml
+  
+  1. Dans la balise <application ...>, ajoutez :
+     android:networkSecurityConfig="@xml/network_security_config"
+     android:usesCleartextTraffic="true"
+  
+  2. Dans <manifest ...>, ajoutez ces permissions :
+-->
+
+<!-- Permissions requises dans <manifest> -->
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+<!--
+  La balise <application> doit ressembler à ça :
+  
+  <application
+      android:allowBackup="true"
+      android:icon="@mipmap/ic_launcher"
+      android:label="@string/app_name"
+      android:roundIcon="@mipmap/ic_launcher_round"
+      android:supportsRtl="true"
+      android:theme="@style/AppTheme"
+      android:networkSecurityConfig="@xml/network_security_config"
+      android:usesCleartextTraffic="true">
+      
+      ...contenu existant...
+      
+  </application>
+-->

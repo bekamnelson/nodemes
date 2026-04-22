@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>PixiChat</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/chat.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div id="offline-banner">⚠️ Hors-ligne — les messages seront envoyés à la reconnexion</div>
+
+<div class="app">
+
+  <!-- SIDEBAR NAV (desktop vertical) -->
+  <nav class="app-nav" id="appNav">
+    <div class="nav-logo"><img src="/images/logo.png" style="width:38px;height:38px;border-radius:10px;object-fit:cover"></div>
+    <div class="nav-items">
+      <div class="nav-item active" onclick="showConversations()" title="Conversations"><i class="fas fa-comment-dots"></i></div>
+      <div class="nav-item" onclick="showContacts()" title="Contacts"><i class="fas fa-users"></i></div>
+      <a href="/Settings.html" class="nav-item" title="Paramètres"><i class="fas fa-sliders-h"></i></a>
+    </div>
+    <a href="/profile.html" class="nav-avatar" title="Mon profil">
+      <img id="navProfilePic" src="/images/noprofil.png" class="avatar" style="width:36px;height:36px">
+    </a>
+  </nav>
+
+  <!-- SIDEBAR CONTENT -->
+  <div class="sidebar" id="sidebar">
+    <!-- Sidebar header -->
+    <div class="sidebar-header">
+      <h2 class="sidebar-title" id="sidebarTitle">Messages</h2>
+      <div id="searchToggleBtn" class="icon-btn" onclick="toggleSearch()" title="Rechercher un contact">
+        <i class="fas fa-user-plus"></i>
+      </div>
+    </div>
+
+    <!-- Search bar (collapsible) -->
+    <div class="search-panel" id="searchPanel" style="display:none">
+      <div class="search-input-wrap">
+        <i class="fas fa-search"></i>
+        <input type="email" id="searchEmail" placeholder="Email du contact à ajouter...">
+        <button onclick="searchUser()"><i class="fas fa-arrow-right"></i></button>
+      </div>
+      <div id="searchResult"></div>
+    </div>
+
+    <!-- Chat list -->
+    <div class="chat-list" id="chatList">
+      <div class="list-empty">
+        <i class="fas fa-comment-slash"></i>
+        <p>Aucune conversation</p>
+      </div>
+    </div>
+
+    <!-- Mobile bottom nav -->
+    <div class="mobile-nav">
+      <div class="mob-nav-item active" onclick="showConversations()"><i class="fas fa-comment-dots"></i></div>
+      <div class="mob-nav-item" onclick="showContacts()"><i class="fas fa-users"></i></div>
+      <a href="/Settings.html" class="mob-nav-item"><i class="fas fa-sliders-h"></i></a>
+      <a href="/profile.html" class="mob-nav-item"><i class="fas fa-user-circle"></i></a>
+    </div>
+  </div>
+
+  <!-- MAIN CHAT -->
+  <main class="chat-main" id="chatMain">
+
+    <!-- Empty state -->
+    <div class="chat-empty" id="chatEmpty">
+      <div class="empty-icon"><img src="/images/logo.png" style="width:48px;height:48px;border-radius:14px;object-fit:cover"></div>
+      <h3>PixiChat</h3>
+      <p>Sélectionnez une conversation pour commencer</p>
+    </div>
+
+    <!-- Chat view (hidden until contact selected) -->
+    <div class="chat-view" id="chatView" style="display:none">
+
+      <!-- Chat header -->
+      <div class="chat-header">
+        <button class="icon-btn back-btn" id="backBtn" onclick="goBackToList()">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <img id="chatAvatar" src="/images/noprofil.png" class="avatar" style="width:40px;height:40px">
+        <div class="chat-header-info">
+          <h4 id="chatName">Nom</h4>
+          <span id="chatStatus"><span class="status-dot"></span> hors-ligne</span>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:4px;">
+          <button class="icon-btn" title="Effacer"><i class="fas fa-ellipsis-v"></i></button>
+        </div>
+      </div>
+
+      <!-- Messages area -->
+      <div class="messages-area" id="messagesArea"></div>
+
+      <!-- Input area -->
+      <div class="input-area">
+        <!-- Reply / Edit preview -->
+        <div class="reply-bar" id="replyBar" style="display:none">
+          <div class="reply-bar-content">
+            <span class="reply-bar-name" id="replyBarName"></span>
+            <span class="reply-bar-text ellipsis" id="replyBarText"></span>
+          </div>
+          <button class="icon-btn" onclick="cancelReply()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- Input row -->
+        <div class="input-row">
+          <label for="fileInput" class="icon-btn" title="Joindre un fichier">
+            <i class="fas fa-paperclip"></i>
+            <input type="file" id="fileInput" style="display:none" onchange="handleFileSelect()">
+          </label>
+          <input type="text" id="msgInput" placeholder="Écrire un message..." autocomplete="off">
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+
+        <!-- File preview -->
+        <div class="file-preview" id="filePreview" style="display:none">
+          <i class="fas fa-file"></i>
+          <span id="filePreviewName"></span>
+          <button class="icon-btn" onclick="clearFile()"><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- FORWARD MODAL -->
+<div class="modal-overlay" id="forwardModal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Transférer à...</h3>
+      <button class="icon-btn" onclick="closeForwardModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="forwardList"></div>
+    <div class="modal-footer">
+      <span id="forwardCount" style="font-size:0.85rem;color:var(--text2)">0 sélectionné(s)</span>
+      <button class="btn-primary" id="confirmForwardBtn" onclick="confirmForward()" disabled style="padding:10px 20px">
+        Envoyer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="ctx-menu" id="ctxMenu" style="display:none">
+  <div class="ctx-item" id="ctxReply"><i class="fas fa-reply"></i> Répondre</div>
+  <div class="ctx-item" id="ctxEdit" style="display:none"><i class="fas fa-edit"></i> Modifier</div>
+  <div class="ctx-item" id="ctxForward"><i class="fas fa-share"></i> Transférer</div>
+  <div class="ctx-item danger" id="ctxDelete"><i class="fas fa-trash"></i> Supprimer</div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="/js/config.js"></script>
+<script src="/js/dexie.js"></script>
+<script src="/js/socket.io.js"></script>
+<script src="/js/chat.js"></script>
+</body>
+</html>

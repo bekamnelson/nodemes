@@ -1,0 +1,40 @@
+# --- DÉPENDANCES (Le plus important) ---
+# Ne jamais envoyer node_modules, c'est trop lourd
+node_modules/
+
+# --- CONFIGURATION & SECRETS ---
+# Fichiers contenant des clés d'API ou mots de passe (si tu en utilises)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- SYSTÈME ---
+# Fichiers créés par Windows ou Mac automatiquement
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- LOGS (Rapports d'erreurs) ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# --- ÉDITEURS (Optionnel, mais recommandé) ---
+# Paramètres de ton éditeur de code
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# --- DOSSIERS DE BUILD / PRODUCTION ---
+# Si tu compiles ton application pour Android (APK) ou PC
+dist/
+build/
+out/
+.cache/

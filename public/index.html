@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixiChat — La messagerie étudiante</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body { overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 5%;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  body.dark nav { background: rgba(14,14,24,0.85); }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 12px; align-items: center; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 20px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(124,106,255,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0,229,204,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  h1 .accent { color: var(--accent); }
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text2);
+    max-width: 500px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .hero-btns {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  /* FEATURES */
+  .features {
+    padding: 80px 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .feature-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: var(--accent-glow);
+    color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+  .feature-card h3 { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 8px; }
+  .feature-card p { color: var(--text2); font-size: 0.9rem; line-height: 1.6; }
+
+  /* DOWNLOAD */
+  .download {
+    text-align: center;
+    padding: 80px 20px;
+    background: var(--surface2);
+  }
+  .download-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 32px; }
+  .dl-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 22px;
+    font-weight: 600;
+    transition: 0.2s;
+    box-shadow: var(--shadow);
+  }
+  .dl-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .dl-btn i { font-size: 1.3rem; color: var(--accent); }
+
+  footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--text3);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .nav-links .btn-ghost { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><img src="/images/logo.png" style="width:32px;height:32px;border-radius:8px;object-fit:cover"><span>Pixi</span>Chat</div>
+  <div class="nav-links">
+    <a href="/login.html" class="btn-ghost">Se connecter</a>
+    <a href="/signup.html" class="btn-primary">Commencer</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-tag"><img src="/images/logo.png" style="width:18px;height:18px;border-radius:4px;object-fit:cover"> Pour les étudiants</div>
+  <h1>Discutez.<br><span class="accent">Collaborez.</span><br>Réussissez.</h1>
+  <p>La messagerie pensée pour les étudiants. Partagez vos cours, organisez des révisions et restez connecté avec vos camarades.</p>
+  <div class="hero-btns">
+    <a href="/signup.html" class="btn-primary"><i class="fas fa-rocket" style="margin-right:8px"></i>Créer un compte</a>
+    <a href="/login.html" class="btn-ghost">Se connecter</a>
+  </div>
+</section>
+
+<section class="features">
+  <h2 class="section-title">Tout ce dont vous avez besoin</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><img src="/images/logo.png" style="width:28px;height:28px;object-fit:contain"></div>
+      <h3>Temps réel</h3>
+      <p>Messages instantanés avec Socket.IO. Voyez quand vos contacts écrivent.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-wifi-slash"></i></div>
+      <h3>Mode hors-ligne</h3>
+      <p>Accédez à vos conversations même sans connexion grâce au cache local Dexie.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-paperclip"></i></div>
+      <h3>Partage de fichiers</h3>
+      <p>Envoyez des images, PDF et documents directement dans vos conversations.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-reply"></i></div>
+      <h3>Réponses & édition</h3>
+      <p>Répondez à un message précis, modifiez ou supprimez après envoi.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-moon"></i></div>
+      <h3>Mode sombre</h3>
+      <p>Interface adaptée à toutes les conditions d'éclairage pour le confort visuel.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fas fa-desktop"></i></div>
+      <h3>Multi-plateforme</h3>
+      <p>Web, Android et application desktop Electron — une expérience unifiée.</p>
+    </div>
+  </div>
+</section>
+
+<section class="download">
+  <h2 class="section-title">Téléchargez PixiChat</h2>
+  <p style="color:var(--text2)">Disponible sur toutes vos plateformes.</p>
+  <div class="download-btns">
+    <div class="dl-btn"><i class="fab fa-android"></i><div><div style="font-size:0.7rem;color:var(--text3)">Disponible sur</div>Android APK</div></div>
+    <div class="dl-btn"><i class="fas fa-desktop"></i><div><div style="font-size:0.7rem;color:var(--text3)">Disponible sur</div>Windows / Mac</div></div>
+    <a href="/chat.html" class="dl-btn"><i class="fas fa-globe"></i><div><div style="font-size:0.7rem;color:var(--text3)">Ouvrir dans</div>Navigateur Web</div></a>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 PixiChat. Tous droits réservés.</p>
+</footer>
+
+<script>
+  // Redirect if already logged in
+  if (localStorage.getItem("userId")) {
+    window.location.href = "/chat.html";
+  }
+  // Apply saved theme
+  if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+  }
+</script>
+</body>
+</html>

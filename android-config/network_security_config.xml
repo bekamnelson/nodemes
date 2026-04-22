@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PIXICHAT — network_security_config.xml
+  
+  À placer dans : android/app/src/main/res/xml/network_security_config.xml
+  
+  Ce fichier résout les erreurs de connexion sur Android 8+ qui bloquent
+  les requêtes HTTP non sécurisées et certains certificats HTTPS.
+-->
+<network-security-config>
+
+    <!-- Autoriser le serveur Render en HTTPS -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">nodemes-3.onrender.com</domain>
+        <domain includeSubdomains="true">res.cloudinary.com</domain>
+        <trust-anchors>
+            <certificates src="system"/>
+            <certificates src="user"/>
+        </trust-anchors>
+    </domain-config>
+
+    <!-- Autoriser localhost pour le développement -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">192.168.0.0</domain>
+    </domain-config>
+
+    <!-- Configuration par défaut : HTTPS seulement -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+
+</network-security-config>

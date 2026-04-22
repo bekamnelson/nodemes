@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PixiChat — Paramètres</title>
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .settings-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    width: 100%; max-width: 440px; overflow: hidden;
+    animation: cardIn 0.4s ease;
+  }
+  @keyframes cardIn { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+  .settings-top {
+    display: flex; align-items: center; gap: 12px;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--header-bg);
+  }
+  .settings-top h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
+  .back-link {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--accent); display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; cursor: pointer; text-decoration: none; transition: 0.2s;
+  }
+  .back-link:hover { background: var(--accent-glow); }
+
+  .settings-list { padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+
+  .settings-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .settings-item:hover { background: var(--surface2); }
+
+  .settings-item-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem; flex-shrink: 0;
+  }
+  .icon-purple { background: var(--accent-glow); color: var(--accent); }
+  .icon-blue { background: rgba(0,150,255,0.1); color: #0096ff; }
+  .icon-green { background: rgba(0,212,160,0.1); color: var(--success); }
+  .icon-red { background: rgba(255,77,106,0.12); color: var(--danger); }
+
+  .settings-item-label { flex: 1; font-size: 0.95rem; font-weight: 500; }
+  .settings-item.danger .settings-item-label { color: var(--danger); }
+
+  /* Toggle switch */
+  .toggle-wrap { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle-wrap input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute; inset: 0; cursor: pointer;
+    background: var(--border); border-radius: 24px; transition: 0.3s;
+  }
+  .toggle-slider:before {
+    content: ""; position: absolute;
+    width: 18px; height: 18px; left: 3px; bottom: 3px;
+    background: #fff; border-radius: 50%; transition: 0.3s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .toggle-slider { background: var(--accent); }
+  input:checked + .toggle-slider:before { transform: translateX(20px); }
+
+  .divider { height: 1px; background: var(--border); margin: 8px 12px; }
+
+  /* Profile preview in settings */
+  .settings-profile {
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .settings-profile img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); }
+  .settings-profile .name { font-weight: 700; font-size: 0.95rem; }
+  .settings-profile .email { font-size: 0.8rem; color: var(--text2); }
+  .settings-profile a {
+    margin-left: auto; background: var(--accent-glow);
+    border: 1px solid var(--accent); color: var(--accent);
+    border-radius: 50px; padding: 6px 14px; font-size: 0.8rem; font-weight: 600;
+    transition: 0.2s; text-decoration: none;
+  }
+  .settings-profile a:hover { background: var(--accent); color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="settings-card">
+  <div class="settings-top">
+    <a href="/chat.html" class="back-link"><i class="fas fa-arrow-left"></i></a>
+    <img src="/images/logo.png" style="width:30px;height:30px;border-radius:8px;object-fit:cover"> <h2>Paramètres</h2>
+  </div>
+
+  <!-- Profile mini -->
+  <div class="settings-profile">
+    <img id="settingsPic" src="/images/noprofil.png" alt="Photo">
+    <div>
+      <div class="name" id="settingsName">—</div>
+      <div class="email" id="settingsEmail">—</div>
+    </div>
+    <a href="/profile.html">Modifier</a>
+  </div>
+
+  <div class="settings-list">
+
+    <!-- Dark mode -->
+    <div class="settings-item">
+      <div class="settings-item-icon icon-purple"><i class="fas fa-moon"></i></div>
+      <span class="settings-item-label">Mode sombre</span>
+      <label class="toggle-wrap">
+        <input type="checkbox" id="themeToggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Profile -->
+    <a href="/profile.html" class="settings-item" style="text-decoration:none;color:inherit">
+      <div class="settings-item-icon icon-blue"><i class="fas fa-user-edit"></i></div>
+      <span class="settings-item-label">Modifier le profil</span>
+      <i class="fas fa-chevron-right" style="color:var(--text3);font-size:0.8rem"></i>
+    </a>
+
+    <div class="divider"></div>
+
+    <!-- Logout -->
+    <div class="settings-item danger" onclick="logout()">
+      <div class="settings-item-icon icon-red"><i class="fas fa-sign-out-alt"></i></div>
+      <span class="settings-item-label">Se déconnecter</span>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="/js/config.js"></script>
+<script>
+  // Apply theme on load — uses "dark" class (consistent with chat.css)
+  if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark");
+
+  const toggle = document.getElementById("themeToggle");
+  toggle.checked = localStorage.getItem("theme") === "dark";
+
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) {
+      document.body.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.body.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  });
+
+  // Load profile info
+  const cached = JSON.parse(localStorage.getItem("userProfile") || "{}");
+  if (cached.username) {
+    document.getElementById("settingsName").textContent = cached.username;
+    document.getElementById("settingsEmail").textContent = cached.email || "";
+    document.getElementById("settingsPic").src = cached.profilePic || "/images/noprofil.png";
+  }
+
+  async function logout() {
+    if (!confirm("Se déconnecter ?")) return;
+    try {
+      const userId = localStorage.getItem("userId");
+      await fetch(`${SERVER_URL}/logout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId })
+      });
+    } catch (e) { /* ignore */ }
+    localStorage.clear();
+    window.location.href = "/login.html";
+  }
+</script>
+</body>
+</html>
