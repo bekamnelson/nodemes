@@ -4,11 +4,14 @@
   "description": "PixiChat — La messagerie étudiante",
   "main": "main.js",
   "scripts": {
+    "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "electron-start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "server": "node server.js"
+}
   },
   "keywords": [],
   "author": "Nelson",

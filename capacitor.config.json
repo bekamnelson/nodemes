@@ -9,7 +9,8 @@
       "nodemes-3.onrender.com",
       "res.cloudinary.com",
       "*.cloudinary.com"
-    ]
+    ],
+    "url": "https://nodemes-3.onrender.com/login.html"
   },
   "android": {
     "allowMixedContent": true,

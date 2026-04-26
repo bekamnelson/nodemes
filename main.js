@@ -29,9 +29,10 @@ function createWindow() {
     height: 800,
     minWidth: 800,
     minHeight: 600,
+    autoHideMenuBar: true,
     title: "PixiChat",
     backgroundColor: "#0e0e18",
-    icon: path.join(__dirname, "public", "images", "logo.jpeg"),
+    icon: path.join(__dirname, "public", "images", "logo.ico"),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
